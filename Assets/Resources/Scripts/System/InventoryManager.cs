@@ -1,89 +1,102 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using UnityEngine.UI; // Cần thiết cho các thành phần UI (nếu dùng Text)
+using UnityEngine.UI; // Cần thiết để dùng Text UI
 
-public class InventoryManager : MonoBehaviour
+[DefaultExecutionOrder(-10)]
+public class InventoryManager : Singleton<InventoryManager>
 {
-    // --- Thiết lập Singleton ---
-    // Giúp các script khác (như PlayerLooter) dễ dàng truy cập
-    public static InventoryManager Instance;
-
-    // Danh sách lưu trữ các vật phẩm (chỉ lưu tên vật phẩm)
+    [Header("Dữ liệu Kho đồ")]
     private List<string> currentInventory = new List<string>();
 
     [Header("Giao diện UI")]
-    // Tham chiếu đến đối tượng Text UI để hiển thị kho đồ (Tùy chọn)
-    // Nếu bạn đang dùng TextMeshPro, hãy đổi thành TMPro.TextMeshProUGUI
+    // 1. Biến này nắm giữ cái khung túi đồ để Bật/Tắt
+    public GameObject uiPanel;
+
+    // 2. Biến này hiển thị chữ
     public Text inventoryDisplay;
 
-    // --- Khởi tạo (Awake) ---
-    void Awake()
+    protected override void OnAwake()
     {
-        // Thiết lập Singleton
-        if (Instance == null)
+        if (currentInventory == null) currentInventory = new List<string>();
+
+        // Mặc định khi vào game thì ẩn túi đồ đi cho gọn
+        if (uiPanel != null)
         {
-            Instance = this;
-            // Nếu bạn muốn đối tượng này tồn tại qua các Scene:
-            // DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            // Hủy đối tượng nếu đã có instance khác
-            Destroy(gameObject);
+            uiPanel.SetActive(false);
         }
     }
 
-    // --- Phương thức Thêm Vật phẩm ---
+    // --- Lắng nghe phím bấm ---
+    private void Update()
+    {
+        // Nhấn phím I để Mở/Đóng túi
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            ToggleInventory();
+        }
+    }
 
-    // 1. Phương thức chính để thêm một vật phẩm
+    public void ToggleInventory()
+    {
+        if (uiPanel != null)
+        {
+            // Đảo ngược trạng thái: Đang mở -> Đóng, Đang đóng -> Mở
+            bool isActive = uiPanel.activeSelf;
+            uiPanel.SetActive(!isActive);
+
+            // Nếu vừa mở lên thì cập nhật lại chữ cho mới nhất
+            if (!isActive) UpdateInventoryUI();
+        }
+    }
+
+    // --- Logic Thêm đồ (Giữ nguyên) ---
     public void AddItem(string itemName)
     {
         currentInventory.Add(itemName);
         Debug.Log($"[Inventory] Đã nhặt: {itemName}");
 
-        // Cập nhật giao diện UI sau khi thêm vật phẩm
+        // Cập nhật text ngay cả khi túi đang đóng (để mở ra là thấy ngay)
         UpdateInventoryUI();
     }
 
-    // 2. Phương thức nhận danh sách vật phẩm từ LootableObject
     public void AddItemsFromLoot(List<LootableObject.LootItem> items)
     {
         foreach (var item in items)
         {
-            // Chỉ thêm tên vật phẩm vào kho đồ đơn giản
             AddItem(item.itemName);
         }
     }
 
-    // --- Cập nhật Giao diện UI ---
-
+    // --- Cập nhật chữ trên UI ---
     private void UpdateInventoryUI()
     {
-        // Thoát nếu không có Text UI được gán
-        if (inventoryDisplay == null) return;
+        if (inventoryDisplay == null)
+        {
+            Debug.LogError("LỖI: Chưa gắn Text vào Inventory Display!");
+            return;
+        }
 
-        string display = "--- KHO ĐỒ ---\n";
+        // --- KIỂM TRA DỮ LIỆU ---
+        Debug.Log($"[CHECK 1] Tổng số món trong list: {currentInventory.Count}");
 
-        // Sử dụng Dictionary để đếm số lượng mỗi loại vật phẩm
+        string display = "--- TÚI ĐỒ CỦA TÔI ---\n\n";
         Dictionary<string, int> itemCounts = new Dictionary<string, int>();
 
         foreach (string item in currentInventory)
         {
             if (itemCounts.ContainsKey(item))
-            {
                 itemCounts[item]++;
-            }
             else
-            {
                 itemCounts.Add(item, 1);
-            }
         }
 
-        // Tạo chuỗi hiển thị: Tên vật phẩm x Số lượng
         foreach (var pair in itemCounts)
         {
-            display += $"{pair.Key} x {pair.Value}\n";
+            display += $"- {pair.Key}: {pair.Value}\n";
         }
+
+        // --- KIỂM TRA CHUỖI SẮP HIỆN ---
+        Debug.Log($"[CHECK 2] Nội dung sắp hiển thị lên UI:\n{display}");
 
         inventoryDisplay.text = display;
     }
