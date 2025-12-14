@@ -4,16 +4,7 @@ public class PlayerLooter : MonoBehaviour
 {
     private LootableObject currentLootable = null;
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            if (currentLootable != null && currentLootable.CanBeLooted())
-            {
-                Loot(currentLootable);
-            }
-        }
-    }
+   
 
     private void OnTriggerEnter2D(Collider2D other)
     {
