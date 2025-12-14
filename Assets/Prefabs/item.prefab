@@ -148,4 +148,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemsToLoot:
-  - itemName: sword
+  - itemName: item

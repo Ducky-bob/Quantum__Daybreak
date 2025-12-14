@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5862425196608499429}
   - component: {fileID: 8013244155907562050}
   m_Layer: 0
-  m_Name: coin 3
+  m_Name: armor 3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 7619366010056468028}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -4.799132, y: 1.5288547, z: 0.049057897}
+  m_LocalPosition: {x: -6.2360897, y: 0.26979887, z: 0.049057897}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -79,7 +79,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.88993406, g: 0.91194963, b: 0.06022296, a: 1}
+  m_Color: {r: 0.89019614, g: 0.91372555, b: 0.058823533, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -102,7 +102,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemsToLoot:
-  - itemName: chest
+  - itemName: armor 3
 --- !u!61 &8013244155907562050
 BoxCollider2D:
   m_ObjectHideFlags: 0

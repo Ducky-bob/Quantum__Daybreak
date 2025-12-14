@@ -4,7 +4,15 @@ public class PlayerLooter : MonoBehaviour
 {
     private LootableObject currentLootable = null;
 
-   
+    private void Update()
+    {
+        // (Giữ nguyên hoặc xóa đoạn nhấn E nếu ông muốn chỉ dùng chuột bấm UI)
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            // Logic phím E: Nhặt món đầu tiên hoặc tất cả (tùy ông)
+            // Ở đây tôi để trống để ông tập trung vào việc bấm chuột
+        }
+    }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -12,6 +20,11 @@ public class PlayerLooter : MonoBehaviour
         if (loot != null)
         {
             currentLootable = loot;
+            // GỌI HÀM MỚI CỦA UI MANAGER
+            if (LootUIManager.Instance != null)
+            {
+                LootUIManager.Instance.ShowLootForObject(loot);
+            }
         }
     }
 
@@ -21,25 +34,10 @@ public class PlayerLooter : MonoBehaviour
         if (loot != null && currentLootable == loot)
         {
             currentLootable = null;
+            if (LootUIManager.Instance != null)
+            {
+                LootUIManager.Instance.HideLootUI();
+            }
         }
-    }
-
-    // --- SỬA LẠI ĐOẠN NÀY ---
-    private void Loot(LootableObject lootSource)
-    {
-        // Debug.Log("Đang loot từ " + lootSource.gameObject.name);
-
-        // Gọi InventoryManager
-        if (InventoryManager.Instance != null)
-        {
-            // THAY ĐỔI Ở ĐÂY:
-            // Truyền trực tiếp "lootSource" (cả cái rương) vào
-            // Thay vì truyền "items" (danh sách) như cũ.
-            InventoryManager.Instance.AddItemsFromLoot(lootSource);
-        }
-
-        // Hủy đối tượng sau khi loot
-        lootSource.DestroyAfterLoot();
-        currentLootable = null;
     }
 }
